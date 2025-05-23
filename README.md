@@ -1,70 +1,85 @@
 # Data Validator
 
 ## Overview
-The Data Validator is a tool designed to validate data files (in formats such as CSV, JSON, etc.) to ensure that the data is correct, consistent, and complete before processing or storage. It checks for format adherence, missing values, and logical inconsistencies, generating a comprehensive validation report.
+Vous êtes chargé(e) de développer un petit outil capable de valider un fichier de données (au format texte, CSV, JSON, etc.). Ces données proviennent d’un formulaire, d’une base ou d’un fichier externe. Avant de les traiter ou de les enregistrer, votre outil doit s’assurer que les valeurs sont correctes, cohérentes et complètes.
 
-## Features
-- Reads data files in various formats.
-- Validates entries against expected formats (e.g., date, email).
-- Checks for missing important values.
-- Identifies logical inconsistencies (e.g., negative ages).
-- Produces a detailed validation report listing errors and valid entries.
+## Fonctionnalités
+- Lit les fichiers de données.
+- Valide les entrées selon des formats attendus (par exemple : date, email).
+- Vérifie l'absence de valeurs importantes manquantes.
+- Identifie les incohérences logiques (par exemple : âges négatifs).
+- Produit un rapport détaillé de validation listant les erreurs et les entrées valides.
 
-## Getting Started
+## Prise en main
 
-### Prerequisites
-Ensure you have Python installed on your machine. You can check your Python version by running:
+### Prérequis
+Assurez-vous que Python est installé sur votre machine. Vous pouvez vérifier la version de Python en exécutant la commande suivante :
 ```
 python --version
 ```
 
 ### Installation
-1. Clone the repository:
+1. Clonez le dépôt :
    ```
    git clone <repository-url>
    ```
-2. Navigate to the project directory:
+2. Accédez au répertoire du projet :
    ```
    cd data-validator
    ```
-3. Install the required dependencies:
+3. Installez les dépendances nécessaires :
    ```
    pip install -r requirements.txt
    ```
 
-### Usage
-To use the Data Validator, you can run the `validator.py` script directly or integrate it into your application. The main class `DataValidator` provides methods for reading and validating data files.
+### Utilisation
+Pour utiliser le Validateur de Données, vous pouvez exécuter directement le script `validator.py` ou l'intégrer dans votre application. La classe principale `DataValidator` fournit des méthodes pour lire et valider les fichiers de données.
 
-### Running Tests
-To run the automated tests, execute the following command:
+### Exécution des Tests
+Pour exécuter les tests automatisés, utilisez la commande suivante :
 ```
 pytest tests/
 ```
 
-### Continuous Integration
-You can also run the CI script to automate the testing process:
-```
-bash scripts/run_ci.sh
-```
+## Pipeline CI Locale
+- Vérifie que Python et pip sont installés.
+- Met à jour les paquets système.
+- Configure un environnement virtuel.
+- Installe les dépendances.
+- Exécute les tests avec `pytest` et génère un rapport de couverture.
+- Affiche un résumé des résultats.
 
-## File Structure
-- `src/`: Contains the main source code for the validator.
-  - `validator.py`: Main validation logic.
-  - `report.py`: Report generation logic.
-  - `utils.py`: Utility functions for data handling.
-- `tests/`: Contains unit tests for the validator.
-  - `test_validator.py`: Tests for the `DataValidator` class.
-  - `test_data/`: Sample data for testing.
-    - `valid_data.json`: Valid data entries.
-    - `invalid_data.json`: Invalid data entries with errors.
-- `scripts/`: Contains automation scripts.
-  - `run_ci.sh`: Script to run tests and generate reports.
-- `requirements.txt`: Lists project dependencies.
-- `README.md`: Documentation for the project.
-- `.gitignore`: Specifies files to ignore in version control.
+### Exécution de la pipeline locale
+1. Donnez les permissions d'exécution au script (si ce n'est pas déjà fait) :
+   ```
+   chmod +x scripts/run_ci.sh
+   ```
+2. Exécutez le script :
+   ```
+   bash ./scripts/run_ci.sh
+   ```
+3. Si vous souhaitez nettoyer l'environnement virtuel avant de l'exécuter :
+   ```
+   bash ./scripts/run_ci.sh --clean
+   ```  
 
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
+### Résultats générés
+- Rapport de tests : `reports/test_report.txt`
+- Rapport de couverture HTML : `coverage_html/index.html`
+- Résumé de couverture : `reports/coverage_summary.txt`
 
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Structure des fichiers
+- `src/` : Contient le code source principal du validateur.
+	- `validator.py` : Logique principale de validation.
+	- `utils.py` : Fonctions utilitaires pour la gestion des données.
+	- `report.py` : Génération de rapports.
+- `tests/` : Contient les tests unitaires pour le validateur.
+	- `test_validator.py` : Tests pour la classe DataValidator.
+	- `test_data/` : Données d'exemple pour les tests.
+		- `valid_data.json` : Entrées de données valides.
+		- `invalid_data.json` : Entrées de données invalides avec des erreurs.
+- `scripts/` : Contient les scripts d'automatisation.
+	- `run_ci.sh` : Script pour exécuter la pipeline CI locale.
+- `requirements.txt` : Liste des dépendances du projet.
+- `README.md` : Documentation du projet.
+- `.gitignore` : Spécifie les fichiers à ignorer dans le contrôle de version.
