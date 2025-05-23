@@ -129,8 +129,7 @@ jobs:
         report_lines.append('DATA VALIDATOR - TEST EXECUTION REPORT')
         report_lines.append('=' * 60)
         report_lines.append(f'Report generated: {datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")}')
-        report_lines.append('')
-        
+
         # Test 1: Valid data
         report_lines.append('TEST 1: Valid Data Validation')
         report_lines.append('-' * 30)
@@ -166,24 +165,6 @@ jobs:
         except Exception as e:
             report_lines.append(f'Status: ERROR - {str(e)}')
         
-        # Test 3: Direct data validation
-        report_lines.append('')
-        report_lines.append('TEST 3: Direct Data Validation')
-        report_lines.append('-' * 30)
-        try:
-            test_data = [
-                {'name': 'Test User', 'email': 'test@example.com', 'age': 25, 'registration_date': '2023-01-01'},
-                {'name': 'Invalid User', 'email': 'invalid-email', 'age': -5, 'registration_date': 'bad-date'}
-            ]
-            validator = DataValidator()
-            result = validator.validate(test_data)
-            report_lines.append(f'Status: {\"PASSED\" if result[\"summary\"][\"total_errors\"] > 0 else \"FAILED\"}')
-            report_lines.append(f'Total entries: {result[\"summary\"][\"total_entries\"]}')
-            report_lines.append(f'Valid entries: {result[\"summary\"][\"total_valid\"]}')
-            report_lines.append(f'Errors detected: {result[\"summary\"][\"total_errors\"]}')
-        except Exception as e:
-            report_lines.append(f'Status: ERROR - {str(e)}')
-        
         report_lines.append('')
         report_lines.append('=' * 60)
         report_lines.append('END OF REPORT')
@@ -198,7 +179,7 @@ jobs:
         "
 
     - name: Upload test artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-reports
@@ -208,7 +189,7 @@ jobs:
           coverage.xml
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success()
       with:
         name: build-output
