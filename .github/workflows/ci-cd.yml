@@ -7,7 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test-and-build:
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -81,36 +82,6 @@ jobs:
             print(f'✗ Error during validation testing: {e}')
             sys.exit(1)
         "
-
-    - name: Build project (simulate build process)
-      run: |
-        echo "Building project..."
-        
-        # Create a simple build directory
-        mkdir -p build
-        
-        # Copy source files to build directory
-        cp -r src/ build/
-        
-        # Create a simple package structure
-        echo "from .validator import DataValidator" > build/src/__init__.py
-        echo "from .report import ValidationReport" >> build/src/__init__.py
-        echo "from .utils import *" >> build/src/__init__.py
-        
-        # Test if the build works
-        cd build
-        python -c "
-        import sys
-        sys.path.insert(0, '.')
-        try:
-            from src import DataValidator, ValidationReport
-            print('✓ Build successful - All modules can be imported')
-        except ImportError as e:
-            print(f'✗ Build failed - Import error: {e}')
-            sys.exit(1)
-        "
-        
-        echo "✓ Build completed successfully"
 
     - name: Generate test report
       if: always()
@@ -188,26 +159,74 @@ jobs:
           htmlcov/
           coverage.xml
 
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    needs: test
+    if: success()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build project (simulate build process)
+      run: |
+        echo "Building project..."
+        
+        # Create a simple build directory
+        mkdir -p build
+        
+        # Copy source files to build directory
+        cp -r src/ build/
+        
+        # Create a simple package structure
+        echo "from .validator import DataValidator" > build/src/__init__.py
+        echo "from .report import ValidationReport" >> build/src/__init__.py
+        echo "from .utils import *" >> build/src/__init__.py
+        
+        # Test if the build works
+        cd build
+        python -c "
+        import sys
+        sys.path.insert(0, '.')
+        try:
+            from src import DataValidator, ValidationReport
+            print('✓ Build successful - All modules can be imported')
+        except ImportError as e:
+            print(f'✗ Build failed - Import error: {e}')
+            sys.exit(1)
+        "
+        
+        echo "✓ Build completed successfully"
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
-      if: success()
       with:
         name: build-output
         path: build/
 
     - name: Display summary
-      if: always()
       run: |
         echo ""
         echo "🚀 CI Pipeline Summary"
         echo "====================="
+        echo "✓ Tests passed successfully"
         echo "✓ Dependencies installed"
-        echo "✓ Tests executed"
         echo "✓ Build process completed"
-        echo "✓ Reports generated"
+        echo "✓ Build artifacts uploaded"
         echo ""
-        echo "📊 Artifacts uploaded:"
-        echo "  - Test reports and coverage"
-        echo "  - Build output (if successful)"
+        echo "📊 Artifacts available:"
+        echo "  - Test reports and coverage (from test job)"
+        echo "  - Build output"
         echo ""
         echo "📁 Check the 'Actions' tab for downloadable artifacts"
