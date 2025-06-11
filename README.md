@@ -62,6 +62,10 @@ pytest tests/
    ```
    bash ./scripts/run_ci.sh --clean
    ```  
+### Démo de lancement 
+
+Voici une démo de la pipeline 
+![Démo](./assets/test_ci.gif)
 
 ### Résultats générés
 - Rapport de tests : `reports/test_report.txt`

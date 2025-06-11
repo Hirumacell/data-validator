@@ -1,95 +1,95 @@
-# Colors for output
+# Couleurs pour l'affichage
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m' # Sans couleur
 
-# Start CI simulation
+# Début de la simulation CI
 echo -e "${YELLOW}========================================${NC}"
-echo -e "${YELLOW}       Simulated CI Pipeline            ${NC}"
+echo -e "${YELLOW}      Simulation de la pipeline CI      ${NC}"
 echo -e "${YELLOW}========================================${NC}"
 
-# Step 0: Check if Python and pip are installed
-echo -e "${YELLOW}Checking if Python and pip are installed...${NC}"
+# Étape 0 : Vérification de Python et pip
+echo -e "${YELLOW}Vérification de l'installation de Python3 et pip3...${NC}"
 if ! command -v python3 &> /dev/null; then
-    echo -e "${RED}✗ Python3 is not installed. Please install it and try again.${NC}"
+    echo -e "${RED}✗ Python3 n'est pas installé. Veuillez l'installer puis réessayer.${NC}"
     exit 1
 else
-    echo -e "${GREEN}✓ Python3 is installed: $(python3 --version)${NC}"
+    echo -e "${GREEN}✓ Python3 est installé : $(python3 --version)${NC}"
 fi
 
 if ! command -v pip3 &> /dev/null; then
-    echo -e "${RED}✗ pip3 is not installed. Please install it and try again.${NC}"
+    echo -e "${RED}✗ pip3 n'est pas installé. Veuillez l'installer puis réessayer.${NC}"
     exit 1
 else
-    echo -e "${GREEN}✓ pip3 is installed: $(pip3 --version)${NC}"
+    echo -e "${GREEN}✓ pip3 est installé : $(pip3 --version)${NC}"
 fi
 
-# Step 1: Create and activate virtual environment
-echo -e "${YELLOW}Setting up virtual environment...${NC}"
+# Étape 1 : Création et activation de l'environnement virtuel
+echo -e "${YELLOW}Création de l'environnement virtuel...${NC}"
 if [ -d "venv" ]; then
-    echo -e "${YELLOW}Virtual environment already exists. Skipping creation.${NC}"
+    echo -e "${YELLOW}L'environnement virtuel existe déjà. Création ignorée.${NC}"
 else
     python3 -m venv venv
     if [ $? -ne 0 ]; then
-        echo -e "${RED}✗ Failed to create virtual environment.${NC}"
+        echo -e "${RED}✗ Échec de la création de l'environnement virtuel.${NC}"
         exit 1
     fi
 fi
 source venv/bin/activate
 
-# Step 2: Install dependencies
-echo -e "${YELLOW}Installing dependencies...${NC}"
+# Étape 2 : Installation des dépendances
+echo -e "${YELLOW}Installation des dépendances...${NC}"
 pip install -r requirements.txt > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}✗ Failed to install dependencies.${NC}"
+    echo -e "${RED}✗ Échec de l'installation des dépendances.${NC}"
     exit 1
 else
-    echo -e "${GREEN}✓ Dependencies installed successfully${NC}"
+    echo -e "${GREEN}✓ Dépendances installées avec succès${NC}"
 fi
 
-# Step 3: Run tests with coverage
-echo -e "${YELLOW}Running tests with coverage...${NC}"
+# Étape 3 : Lancement des tests avec Couverture
+echo -e "${YELLOW}Exécution des tests avec Couverture...${NC}"
 pytest tests/ --cov=src --cov-report=term --cov-report=html:coverage_html --cov-report=xml:coverage.xml > reports/test_report.txt 2>&1
-TEST_EXIT_CODE=$?
+CODE_SORTIE_TEST=$?
 
-if [ $TEST_EXIT_CODE -eq 0 ]; then
-    echo -e "${GREEN}✓ All tests passed successfully${NC}"
+if [ $CODE_SORTIE_TEST -eq 0 ]; then
+    echo -e "${GREEN}✓ Tous les tests ont réussi${NC}"
 else
-    echo -e "${RED}✗ Some tests failed. Check the report in 'reports/test_report.txt'${NC}"
+    echo -e "${RED}✗ Certains tests ont échoué. Consultez le rapport : 'reports/test_report.txt'${NC}"
 fi
 
-# Step 4: Generate coverage report
-echo -e "${YELLOW}Generating coverage report...${NC}"
+# Étape 4 : Génération du rapport de Couverture
+echo -e "${YELLOW}Génération du rapport de Couverture...${NC}"
 if [ -f "coverage.xml" ]; then
-    COVERAGE=$(grep -oP 'line-rate="\K[0-9.]+' coverage.xml | awk '{print $1 * 100}')
-    echo -e "${GREEN}✓ Coverage report generated: ${COVERAGE}%${NC}"
-    echo "Coverage: ${COVERAGE}%" > reports/coverage_summary.txt
+    Couverture=$(grep -oP 'line-rate="\K[0-9.]+' coverage.xml | awk '{print $1 * 100}')
+    echo -e "${GREEN}✓ Rapport de Couverture généré : ${Couverture}%${NC}"
+    echo "Couverture : ${Couverture}%" > reports/coverage_summary.txt
 else
-    echo -e "${RED}✗ Failed to generate coverage report${NC}"
+    echo -e "${RED}✗ Échec de la génération du rapport de Couverture${NC}"
     exit 1
 fi
 
-# Step 5: Display summary
+# Étape 5 : Affichage du résumé
 echo -e "${YELLOW}========================================${NC}"
-echo -e "${YELLOW}           CI Pipeline Summary          ${NC}"
+echo -e "${YELLOW}        Résumé de la pipeline CI        ${NC}"
 echo -e "${YELLOW}========================================${NC}"
-if [ $TEST_EXIT_CODE -eq 0 ]; then
-    echo -e "${GREEN}✓ All tests passed${NC}"
+if [ $CODE_SORTIE_TEST -eq 0 ]; then
+    echo -e "${GREEN}✓ Tous les tests sont passés avec succès${NC}"
 else
-    echo -e "${RED}✗ Some tests failed${NC}"
+    echo -e "${RED}✗ Des tests ont échoué${NC}"
 fi
-echo -e "${GREEN}✓ Coverage: ${COVERAGE}%${NC}"
-echo -e "${YELLOW}Reports generated:${NC}"
-echo "  - Test report: reports/test_report.txt"
-echo "  - Coverage report (HTML): coverage_html/index.html"
-echo "  - Coverage summary: reports/coverage_summary.txt"
+echo -e "${GREEN}✓ Couverture : ${Couverture}%${NC}"
+echo -e "${YELLOW}Rapports générés :${NC}"
+echo "  - Rapport de tests : reports/test_report.txt"
+echo "  - Rapport de Couverture (HTML) : coverage_html/index.html"
+echo "  - Résumé de Couverture : reports/coverage_summary.txt"
 
-# Step 6: Option to clean the venv
+# Étape 6 : Option de nettoyage de l'environnement virtuel
 if [ "$1" == "--clean" ]; then
-    echo -e "${YELLOW}Cleaning existing virtual environment...${NC}"
+    echo -e "${YELLOW}Suppression de l'environnement virtuel existant...${NC}"
     rm -rf venv
 fi
 
-# Exit with the appropriate code
-exit $TEST_EXIT_CODE
+# Sortie avec le code approprié
+exit $CODE_SORTIE_TEST
